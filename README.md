@@ -110,6 +110,12 @@ Tasarım sürecinde:
 
 ---
 
+# Bilgilendirme
+
+Bu uygulama bağımsız bir öğrenci projesidir ve herhangi bir kurum, belediye veya işletme ile resmi bağlantısı bulunmamaktadır.
+
+Uygulamada yer alan işletme isimleri, telefon numaraları ve yönlendirme bağlantıları kamuya açık kaynaklardan derlenmiştir. Bilgiler zaman içerisinde değişebilir.
+
 # Proje Durumu
 
 Proje aktif geliştirme aşamasındadır.
@@ -133,3 +139,4 @@ Projeyi çalıştırmak için:
 ```bash
 npm install
 npx expo start
+
