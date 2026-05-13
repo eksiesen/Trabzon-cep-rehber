@@ -19,12 +19,27 @@ import {
   PLACE_CATEGORIES,
 } from '../constants/data';
 import { cardShadow } from '../constants/layout';
+import {
+  HistoricalPlacesScreen,
+  type HistoricalPlace,
+} from './HistoricalPlacesScreen';
+import { HistoricalPlaceDetailScreen } from './HistoricalPlaceDetailScreen';
+import { ParksScreen, type Park } from './ParksScreen';
+import { ParkDetailScreen } from './ParkDetailScreen';
+import { GastronomyScreen, type GastronomyItem } from './GastronomyScreen';
+import { GastronomyDetailScreen } from './GastronomyDetailScreen';
 import type { RootTabParamList } from '../navigation/types';
 import { colors, radius } from '../theme';
 
 type PlacesView =
   | 'root'
   | 'dogal'
+  | 'tarihi'
+  | 'tarihi-detail'
+  | 'parklar'
+  | 'parklar-detail'
+  | 'gastro'
+  | 'gastro-detail'
   | 'uzungol'
   | 'sera'
   | 'cal-magarasi'
@@ -81,6 +96,11 @@ export function PlacesTabScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const [view, setView] = React.useState<PlacesView>('root');
+  const [selectedHistorical, setSelectedHistorical] =
+    React.useState<HistoricalPlace | null>(null);
+  const [selectedPark, setSelectedPark] = React.useState<Park | null>(null);
+  const [selectedGastro, setSelectedGastro] =
+    React.useState<GastronomyItem | null>(null);
   const navigation =
     useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
@@ -227,7 +247,7 @@ export function PlacesTabScreen() {
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            <View style={styles.detailDivider} />
 
             <View style={styles.howBlock}>
               <Text style={styles.howTitle}>Otobüs</Text>
@@ -432,7 +452,7 @@ export function PlacesTabScreen() {
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            <View style={styles.detailDivider} />
 
             <View style={styles.howBlock}>
               <Text style={styles.howTitle}>Otobüs</Text>
@@ -633,7 +653,7 @@ export function PlacesTabScreen() {
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            <View style={styles.detailDivider} />
 
             <View style={styles.howBlock}>
               <Text style={styles.howTitle}>Otobüs</Text>
@@ -1169,9 +1189,7 @@ export function PlacesTabScreen() {
             <View style={styles.howBlock}>
               <Text style={styles.howTitle}>Dolmuş</Text>
               <Text style={styles.howText}>
-                Moloz - Maçka dolmuşları kullanılarak Maçka merkezine ulaşılabilir.
-                Maçka merkezinden sonra Sümela yönüne giden minibüsler
-                kullanılarak Altındere Vadisi bölgesine geçilebilir.
+                Moloz - Sümela dolmuşları kullanılabilir.
               </Text>
               <Pressable
                 accessibilityRole="button"
@@ -1193,7 +1211,7 @@ export function PlacesTabScreen() {
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            <View style={styles.detailDivider} />
 
             <View style={styles.howBlock}>
               <Text style={styles.howTitle}>Otobüs</Text>
@@ -1363,6 +1381,69 @@ export function PlacesTabScreen() {
     );
   }
 
+  if (view === 'tarihi') {
+    return (
+      <HistoricalPlacesScreen
+        onBack={() => setView('root')}
+        onSelect={(place) => {
+          setSelectedHistorical(place);
+          setView('tarihi-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'tarihi-detail' && selectedHistorical) {
+    return (
+      <HistoricalPlaceDetailScreen
+        place={selectedHistorical}
+        onBack={() => setView('tarihi')}
+      />
+    );
+  }
+
+  if (view === 'parklar') {
+    return (
+      <ParksScreen
+        onBack={() => setView('root')}
+        onSelect={(park) => {
+          setSelectedPark(park);
+          setView('parklar-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'parklar-detail' && selectedPark) {
+    return (
+      <ParkDetailScreen
+        park={selectedPark}
+        onBack={() => setView('parklar')}
+      />
+    );
+  }
+
+  if (view === 'gastro') {
+    return (
+      <GastronomyScreen
+        onBack={() => setView('root')}
+        onSelect={(item) => {
+          setSelectedGastro(item);
+          setView('gastro-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'gastro-detail' && selectedGastro) {
+    return (
+      <GastronomyDetailScreen
+        item={selectedGastro}
+        onBack={() => setView('gastro')}
+      />
+    );
+  }
+
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
       <ScrollView
@@ -1398,6 +1479,9 @@ export function PlacesTabScreen() {
               accessibilityLabel={c.label}
               onPress={() => {
                 if (c.key === 'dogal') setView('dogal');
+                if (c.key === 'tarihi') setView('tarihi');
+                if (c.key === 'park') setView('parklar');
+                if (c.key === 'gastro') setView('gastro');
               }}
             >
               <View style={styles.catIcon}>
@@ -1408,7 +1492,7 @@ export function PlacesTabScreen() {
           ))}
         </View>
 
-        <View style={styles.divider} />
+        <View style={styles.sectionDivider} />
 
         <Text style={styles.sectionLabel}>Öne çıkan duraklar</Text>
         {DESTINATIONS.map((d) => (
@@ -1726,7 +1810,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: colors.secondarySoft,
   },
-  divider: {
+  detailDivider: {
     marginTop: 16,
     height: 1,
     backgroundColor: colors.border,
@@ -1804,7 +1888,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     lineHeight: 18,
   },
-  divider: {
+  sectionDivider: {
     height: 1,
     backgroundColor: colors.border,
     marginVertical: 22,
@@ -1917,7 +2001,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radius.xl,
     // Web: cover + center crop (native ignores safely)
     objectFit: 'cover',
-    objectPosition: 'center',
   },
   natureOverlay: {
     ...StyleSheet.absoluteFillObject,
