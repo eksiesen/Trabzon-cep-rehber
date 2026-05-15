@@ -110,7 +110,6 @@ export const PLACE_CATEGORIES = [
     label: 'Gastronomi',
     icon: 'restaurant-outline' as const,
   },
-  { key: 'ilce', label: 'İlçeler', icon: 'map-outline' as const },
   {
     key: 'manzara',
     label: 'Manzara Noktaları',

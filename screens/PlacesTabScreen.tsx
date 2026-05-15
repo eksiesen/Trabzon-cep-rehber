@@ -30,6 +30,8 @@ import { ViewpointsScreen, type ViewpointSpot } from './ViewpointsScreen';
 import { ViewpointDetailScreen } from './ViewpointDetailScreen';
 import { GastronomyScreen, type GastronomyItem } from './GastronomyScreen';
 import { GastronomyDetailScreen } from './GastronomyDetailScreen';
+import { BusinessScreen, type BusinessSpot } from './BusinessScreen';
+import { BusinessDetailScreen } from './BusinessDetailScreen';
 import type { RootTabParamList } from '../navigation/types';
 import { colors, radius } from '../theme';
 
@@ -49,7 +51,9 @@ type PlacesView =
   | 'cal-magarasi'
   | 'hidirnebi'
   | 'sultan-murat'
-  | 'altindere';
+  | 'altindere'
+  | 'isletme'
+  | 'isletme-detail';
 
 const NATURAL_PLACES = [
   {
@@ -107,6 +111,8 @@ export function PlacesTabScreen() {
     React.useState<GastronomyItem | null>(null);
   const [selectedViewpoint, setSelectedViewpoint] =
     React.useState<ViewpointSpot | null>(null);
+  const [selectedBusiness, setSelectedBusiness] =
+    React.useState<BusinessSpot | null>(null);
   const navigation =
     useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
@@ -1471,6 +1477,27 @@ export function PlacesTabScreen() {
     );
   }
 
+  if (view === 'isletme') {
+    return (
+      <BusinessScreen
+        onBack={() => setView('root')}
+        onSelect={(spot) => {
+          setSelectedBusiness(spot);
+          setView('isletme-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'isletme-detail' && selectedBusiness) {
+    return (
+      <BusinessDetailScreen
+        spot={selectedBusiness}
+        onBack={() => setView('isletme')}
+      />
+    );
+  }
+
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
       <ScrollView
@@ -1510,6 +1537,7 @@ export function PlacesTabScreen() {
                 if (c.key === 'park') setView('parklar');
                 if (c.key === 'manzara') setView('manzara');
                 if (c.key === 'gastro') setView('gastro');
+                if (c.key === 'isletme') setView('isletme');
               }}
             >
               <View style={styles.catIcon}>
