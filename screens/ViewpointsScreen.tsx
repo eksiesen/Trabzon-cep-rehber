@@ -14,135 +14,92 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cardShadow } from '../constants/layout';
 import { colors, radius } from '../theme';
 
-export type GastronomyItem = {
+export type ViewpointSpot = {
   key: string;
   title: string;
   description: string;
   tags: string[];
   image: ImageSourcePropType;
-  shortInfo: string;
-  restaurantMapUrls: readonly string[];
+  mapUrl: string;
+  transport?:
+    | {
+        kind: 'two';
+        dolmusText: string;
+        otobusText: string;
+      }
+    | {
+        kind: 'single';
+        title: string;
+        text: string;
+      };
+  /** Harita linki ve kısa açıklama; yoksa detayda bölüm gösterilmez */
+  venueSuggestions?: readonly { mapUrl: string; description: string }[];
 };
 
-const GASTRO_ITEMS: readonly GastronomyItem[] = [
+const VIEWPOINTS: readonly ViewpointSpot[] = [
   {
-    key: 'akcaabat-kofte',
-    title: 'Akçaabat Köftesi',
-    description: 'Trabzon’un en meşhur köfte lezzeti',
-    tags: ['Köfte', 'Yöresel', 'Et'],
-    image: require('../assets/places/akcaabat-kofte.jpg'),
-    shortInfo:
-      'Akçaabat köftesi; sinir ve fazla yağ içermeyen etlerin kıyma haline getirilmesiyle hazırlanır. Geleneksel tarifte ön kol eti, kaburga eti, işkembe yağı ve böbrek yağı kullanılmaktadır.',
-    restaurantMapUrls: [
-      'https://share.google/JXDqjwufd3DfrZd7D',
-      'https://share.google/JAYjyhS3wT9HrClG2',
-      'https://share.google/dzjrbsbvtytQTycu8',
+    key: 'boztepe',
+    title: 'Boztepe',
+    description:
+      'Trabzon şehir manzarasını izleyebileceğiniz en popüler noktalardan biri',
+    tags: ['Manzara', 'Şehir', 'Seyir'],
+    image: require('../assets/places/boztepe-seyir.jpg'),
+    mapUrl: 'https://share.google/yCSRmC0n3SXaYYw4k',
+    transport: {
+      kind: 'two',
+      dolmusText: 'Tanjant - Boztepe dolmuşları kullanılabilir.',
+      otobusText:
+        '141 numaralı belediye otobüsü kullanılarak 2668 - Kemik Hastanesi durağında inilebilir. Sonrasında yaklaşık 10 dakikalık yürüyüş mesafesi bulunmaktadır.',
+    },
+    venueSuggestions: [
+      {
+        mapUrl: 'https://share.google/2I6n3sTuIIYdnavGX',
+        description:
+          'Burada Trabzon manzarasına karşı semaver çay deneyimi yaşayabilirsiniz.',
+      },
     ],
   },
   {
-    key: 'surmene-pidesi',
-    title: 'Sürmene Pidesi',
-    description: 'Bol tereyağlı Karadeniz pidesi',
-    tags: ['Pide', 'Yöresel', 'Tereyağı'],
-    image: require('../assets/places/surmene-pide.jpg'),
-    shortInfo:
-      'Sürmene pidesi; bol tereyağı ve Trabzon’a özgü peynirlerle hazırlanan Karadeniz’e özgü pide çeşitlerinden biridir.',
-    restaurantMapUrls: [
-      'https://share.google/n9hgtRFHgOSoZPzW6',
-      'https://share.google/TPTWIPVgN5P0PtJYq',
-      'https://share.google/0RaN0X6sAdTIl9zGP',
+    key: 'ganita-sahili',
+    title: 'Ganita Sahili',
+    description: 'Sahil yürüyüşü ve gün batımı için popüler yaşam alanı',
+    tags: ['Sahil', 'Gün Batımı', 'Yürüyüş'],
+    image: require('../assets/places/ganita-sahil.jpg'),
+    mapUrl: 'https://share.google/csbCkVqkH59wIHnRG',
+    transport: {
+      kind: 'single',
+      title: 'Ulaşım Bilgisi',
+      text: 'Ganita Sahili, Trabzon Meydan bölgesine yaklaşık 10 dakikalık yürüme mesafesinde bulunmaktadır.',
+    },
+    venueSuggestions: [
+      {
+        mapUrl: 'https://share.google/8daxEL15FieaYA48f',
+        description: 'Ganita sahilinde balık ekmek deneyebilirsiniz.',
+      },
     ],
   },
   {
-    key: 'hamsikoy-sutlaci',
-    title: 'Hamsiköy Sütlacı',
-    description: 'Coğrafi işaretli Trabzon sütlacı',
-    tags: ['Tatlı', 'Sütlaç', 'Yöresel'],
-    image: require('../assets/places/hamsikoy-sutlac.jpg'),
-    shortInfo:
-      'Hamsiköy sütlacı, Trabzon’un Hamsiköy yöresine özgü coğrafi işaretli bir tatlıdır. 2017 yılında Türk Patent ve Marka Kurumu tarafından tescillenmiştir.',
-    restaurantMapUrls: [
-      'https://share.google/pk6ldJJw4nfyANNQK',
-      'https://share.google/sJ2ZqaWDs7YKKWjF0',
-    ],
-  },
-  {
-    key: 'vakfikebir-ekmegi',
-    title: 'Vakfıkebir Ekmeği',
-    description: 'Taş fırında pişen meşhur ekmek',
-    tags: ['Ekmek', 'Taş Fırın', 'Yöresel'],
-    image: require('../assets/places/vakfikebir-ekmek.jpg'),
-    shortInfo:
-      'Vakfıkebir ekmeği ekşi mayalı olarak hazırlanır ve taş fırınlarda pişirilir. Büyük yapısı ve geç bayatlamasıyla bilinmektedir.',
-    restaurantMapUrls: ['https://share.google/Klewks9VnjNjf9sxw'],
-  },
-  {
-    key: 'kuymak',
-    title: 'Kuymak',
-    description: 'Tereyağı ve Trabzon peyniriyle yapılan yöresel lezzet',
-    tags: ['Kahvaltı', 'Peynir', 'Yöresel'],
-    image: require('../assets/places/kuymak.jpg'),
-    shortInfo:
-      'Kuymak; tereyağı, mısır unu ve Trabzon peyniri ile hazırlanan Karadeniz mutfağına ait geleneksel bir yemektir.',
-    restaurantMapUrls: [
-      'https://share.google/2iov5YH5ZKubXsjSF',
-      'https://share.google/248T3P2ED74gKOf3T',
-    ],
-  },
-  {
-    key: 'kalkanoglu-pilavi',
-    title: 'Kalkanoğlu Pilavı',
-    description: 'Tarihi Trabzon pilav kültürü',
-    tags: ['Pilav', 'Tarih', 'Yöresel'],
-    image: require('../assets/places/kalkanoglu-pilav.jpg'),
-    shortInfo:
-      'Kalkanoğlu Pilavı’nın geçmişi Osmanlı-Rus savaşları dönemine kadar uzanmaktadır. Trabzon’da halka ücretsiz pilav dağıtımıyla başlayan gelenek daha sonra profesyonel işletmeye dönüşmüştür.',
-    restaurantMapUrls: ['https://share.google/tRa8FyEEvHT2d3A0d'],
-  },
-  {
-    key: 'laz-boregi',
-    title: 'Laz Böreği',
-    description: 'Muhallebili Karadeniz tatlısı',
-    tags: ['Tatlı', 'Şerbet', 'Yöresel'],
-    image: require('../assets/places/laz-boregi.jpg'),
-    shortInfo:
-      'Laz böreği; yufka, tereyağı, muhallebi ve şerbet ile hazırlanan Doğu Karadeniz’e özgü geleneksel bir tatlıdır.',
-    restaurantMapUrls: ['https://share.google/LShVoCYZXEV3Zx4yZ'],
-  },
-  {
-    key: 'karalahana-corbasi',
-    title: 'Karalahana Çorbası',
-    description: 'Karadeniz mutfağının klasik çorbası',
-    tags: ['Çorba', 'Karalahana', 'Yöresel'],
-    image: require('../assets/places/karalahana-corbasi.jpg'),
-    shortInfo:
-      'Karalahana çorbası; karalahana, pirinç veya bulgur kullanılarak hazırlanan Karadeniz mutfağının geleneksel çorbalarından biridir.',
-    restaurantMapUrls: [
-      'https://share.google/dI8faHC0TpmLDvHtn',
-      'https://share.google/mzETitzTYyqsIuMph',
-    ],
-  },
-  {
-    key: 'hamsi-tava',
-    title: 'Hamsi Tava',
-    description: 'Karadeniz mutfağının en meşhur balık lezzetlerinden biri',
-    tags: ['Balık', 'Karadeniz', 'Deniz Ürünü'],
-    image: require('../assets/places/hamsi-tava.jpg'),
-    shortInfo:
-      'Hamsi, Karadeniz mutfağının vazgeçilmez balıklarından biridir ve bölgenin en köklü lezzetleri arasında yer almaktadır. Basılı ilk Osmanlı yemek kitaplarından biri olan Melceü’t-Tabbâhîn’de de hamsi tava tarifine yer verilmiştir.',
-    restaurantMapUrls: [
-      'https://share.google/HjX2BaOysWM4STEPb',
-      'https://share.google/m0ysoaUiLhfmbGcK7',
-    ],
+    key: 'faroz-sahili',
+    title: 'Faroz Sahili',
+    description: 'Deniz manzarası ve sahil atmosferiyle öne çıkan bölge',
+    tags: ['Sahil', 'Deniz', 'Manzara'],
+    image: require('../assets/places/faroz-sahil.jpg'),
+    mapUrl: 'https://share.google/RP6whwOn5oUqUK0WY',
+    transport: {
+      kind: 'two',
+      dolmusText: 'Postane - Beşirli dolmuşları kullanılabilir.',
+      otobusText:
+        '114 numaralı belediye otobüsü kullanılarak 1028 - TS Avni Aker Stadı Karşısı durağında inilebilir.',
+    },
   },
 ];
 
-export function GastronomyScreen({
+export function ViewpointsScreen({
   onBack,
   onSelect,
 }: {
   onBack: () => void;
-  onSelect: (item: GastronomyItem) => void;
+  onSelect: (spot: ViewpointSpot) => void;
 }) {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
@@ -168,13 +125,13 @@ export function GastronomyScreen({
           <Text style={styles.backText}>Gezilecek Yerler</Text>
         </Pressable>
 
-        <Text style={styles.heroTitle}>Gastronomi</Text>
+        <Text style={styles.heroTitle}>Manzara Noktaları</Text>
         <Text style={styles.heroLead}>
-          Trabzon’un yöresel lezzetleri ve yemek kültürü.
+          Şehir manzarası, sahil yürüyüşleri ve gün batımı noktaları.
         </Text>
 
         <View style={{ marginTop: 12 }}>
-          {GASTRO_ITEMS.map((p) => (
+          {VIEWPOINTS.map((p) => (
             <Pressable
               key={p.key}
               accessibilityRole="button"

@@ -26,6 +26,8 @@ import {
 import { HistoricalPlaceDetailScreen } from './HistoricalPlaceDetailScreen';
 import { ParksScreen, type Park } from './ParksScreen';
 import { ParkDetailScreen } from './ParkDetailScreen';
+import { ViewpointsScreen, type ViewpointSpot } from './ViewpointsScreen';
+import { ViewpointDetailScreen } from './ViewpointDetailScreen';
 import { GastronomyScreen, type GastronomyItem } from './GastronomyScreen';
 import { GastronomyDetailScreen } from './GastronomyDetailScreen';
 import type { RootTabParamList } from '../navigation/types';
@@ -38,6 +40,8 @@ type PlacesView =
   | 'tarihi-detail'
   | 'parklar'
   | 'parklar-detail'
+  | 'manzara'
+  | 'manzara-detail'
   | 'gastro'
   | 'gastro-detail'
   | 'uzungol'
@@ -101,6 +105,8 @@ export function PlacesTabScreen() {
   const [selectedPark, setSelectedPark] = React.useState<Park | null>(null);
   const [selectedGastro, setSelectedGastro] =
     React.useState<GastronomyItem | null>(null);
+  const [selectedViewpoint, setSelectedViewpoint] =
+    React.useState<ViewpointSpot | null>(null);
   const navigation =
     useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
@@ -1423,6 +1429,27 @@ export function PlacesTabScreen() {
     );
   }
 
+  if (view === 'manzara') {
+    return (
+      <ViewpointsScreen
+        onBack={() => setView('root')}
+        onSelect={(spot) => {
+          setSelectedViewpoint(spot);
+          setView('manzara-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'manzara-detail' && selectedViewpoint) {
+    return (
+      <ViewpointDetailScreen
+        spot={selectedViewpoint}
+        onBack={() => setView('manzara')}
+      />
+    );
+  }
+
   if (view === 'gastro') {
     return (
       <GastronomyScreen
@@ -1481,6 +1508,7 @@ export function PlacesTabScreen() {
                 if (c.key === 'dogal') setView('dogal');
                 if (c.key === 'tarihi') setView('tarihi');
                 if (c.key === 'park') setView('parklar');
+                if (c.key === 'manzara') setView('manzara');
                 if (c.key === 'gastro') setView('gastro');
               }}
             >
