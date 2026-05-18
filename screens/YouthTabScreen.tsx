@@ -6,6 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { YOUTH_CATEGORIES } from '../constants/data';
 import { cardShadow } from '../constants/layout';
 import { colors, radius } from '../theme';
+import { YouthScreen, type YouthSpot } from './YouthScreen';
+import { YouthDetailScreen } from './YouthDetailScreen';
+
+type YouthView = 'root' | 'kafe' | 'kafe-detail';
 
 const TIPS = [
   {
@@ -31,6 +35,29 @@ const TIPS = [
 export function YouthTabScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const [view, setView] = React.useState<YouthView>('root');
+  const [selectedSpot, setSelectedSpot] = React.useState<YouthSpot | null>(null);
+
+  if (view === 'kafe') {
+    return (
+      <YouthScreen
+        onBack={() => setView('root')}
+        onSelect={(spot) => {
+          setSelectedSpot(spot);
+          setView('kafe-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'kafe-detail' && selectedSpot) {
+    return (
+      <YouthDetailScreen
+        spot={selectedSpot}
+        onBack={() => setView('kafe')}
+      />
+    );
+  }
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -58,6 +85,9 @@ export function YouthTabScreen() {
           {YOUTH_CATEGORIES.map((c) => (
             <Pressable
               key={c.key}
+              onPress={() => {
+                if (c.key === 'kafe') setView('kafe');
+              }}
               style={({ pressed }) => [
                 styles.catTile,
                 cardShadow,
