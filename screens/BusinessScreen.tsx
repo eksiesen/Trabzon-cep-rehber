@@ -64,6 +64,22 @@ const BUSINESSES: readonly BusinessSpot[] = [
     image: require('../assets/places/ceramicca-kafe.jpg'),
     mapUrl: 'https://share.google/eHm2iLkGnWaAyRFBK',
   },
+  {
+    key: 'cafe-guz-eli',
+    title: 'Cafe Güz.eli',
+    description: 'Estetik tasarımıyla dikkat çeken konsept kafe',
+    tags: ['Konsept', 'Kafe', 'Fotoğraf'],
+    image: require('../assets/places/cafe-güz-eli.jpg'),
+    mapUrl: 'https://share.google/YxLkAcOYL47QAOW4j',
+  },
+  {
+    key: 'ruzan-antika',
+    title: 'Ruzan Antika Kafe',
+    description: 'Antika konseptiyle öne çıkan farklı bir kafe deneyimi',
+    tags: ['Antika', 'Konsept', 'Kafe'],
+    image: require('../assets/places/antika-kafe.jpg'),
+    mapUrl: 'https://share.google/xVM8zk0OZK3bqwfif',
+  },
 ];
 
 export function BusinessScreen({

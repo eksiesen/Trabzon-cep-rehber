@@ -8,8 +8,10 @@ import { cardShadow } from '../constants/layout';
 import { colors, radius } from '../theme';
 import { YouthScreen, type YouthSpot } from './YouthScreen';
 import { YouthDetailScreen } from './YouthDetailScreen';
+import { YouthUniScreen, type YouthUni } from './YouthUniScreen';
+import { YouthUniDetailScreen } from './YouthUniDetailScreen';
 
-type YouthView = 'root' | 'kafe' | 'kafe-detail';
+type YouthView = 'root' | 'kafe' | 'kafe-detail' | 'uni' | 'uni-detail';
 
 const TIPS = [
   {
@@ -37,6 +39,7 @@ export function YouthTabScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const [view, setView] = React.useState<YouthView>('root');
   const [selectedSpot, setSelectedSpot] = React.useState<YouthSpot | null>(null);
+  const [selectedUni, setSelectedUni] = React.useState<YouthUni | null>(null);
 
   if (view === 'kafe') {
     return (
@@ -55,6 +58,27 @@ export function YouthTabScreen() {
       <YouthDetailScreen
         spot={selectedSpot}
         onBack={() => setView('kafe')}
+      />
+    );
+  }
+
+  if (view === 'uni') {
+    return (
+      <YouthUniScreen
+        onBack={() => setView('root')}
+        onSelect={(uni) => {
+          setSelectedUni(uni);
+          setView('uni-detail');
+        }}
+      />
+    );
+  }
+
+  if (view === 'uni-detail' && selectedUni) {
+    return (
+      <YouthUniDetailScreen
+        uni={selectedUni}
+        onBack={() => setView('uni')}
       />
     );
   }
@@ -87,6 +111,7 @@ export function YouthTabScreen() {
               key={c.key}
               onPress={() => {
                 if (c.key === 'kafe') setView('kafe');
+                if (c.key === 'uni') setView('uni');
               }}
               style={({ pressed }) => [
                 styles.catTile,
